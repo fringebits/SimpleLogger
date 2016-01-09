@@ -6,9 +6,14 @@ namespace SimpleLogger.Logging.Handlers
 {
     public class FileLoggerHandler : ILoggerHandler
     {
-        private readonly string _fileName;
-        private readonly string _directory;
-        private readonly ILoggerFormatter _loggerFormatter;
+        private readonly string fileName;
+        private readonly string directory;
+        private readonly ILoggerFormatter loggerFormatter;
+
+        public string Fullpath
+        {
+            get { return Path.Combine(this.directory, this.fileName); }
+        }
 
         public FileLoggerHandler() : this(CreateFileName()) { }
 
@@ -22,30 +27,29 @@ namespace SimpleLogger.Logging.Handlers
 
         public FileLoggerHandler(ILoggerFormatter loggerFormatter, string fileName, string directory)
         {
-            _loggerFormatter = loggerFormatter;
-            _fileName = fileName;
-            _directory = directory;
+            this.loggerFormatter = loggerFormatter;
+            this.fileName = string.IsNullOrEmpty(fileName) ? CreateFileName() : fileName;
+            this.directory = directory;
         }
 
         public void Publish(LogMessage logMessage)
         {
-            if (!string.IsNullOrEmpty(_directory))
+            if (!string.IsNullOrEmpty(this.directory))
             {
-                var directoryInfo = new DirectoryInfo(Path.Combine(_directory));
+                var directoryInfo = new DirectoryInfo(Path.Combine(this.directory));
                 if (!directoryInfo.Exists)
                     directoryInfo.Create();
             }
 
-            using (var writer = new StreamWriter(File.Open(Path.Combine(_directory, _fileName), FileMode.Append)))
-                writer.WriteLine(_loggerFormatter.ApplyFormat(logMessage));
+            using (var writer = new StreamWriter(File.Open(Path.Combine(this.directory, this.fileName), FileMode.Append)))
+                writer.WriteLine(this.loggerFormatter.ApplyFormat(logMessage));
         }
 
         private static string CreateFileName()
         {
             var currentDate = DateTime.Now;
             var guid = Guid.NewGuid();
-            return string.Format("Log_{0:0000}{1:00}{2:00}-{3:00}{4:00}_{5}.log",
-                currentDate.Year, currentDate.Month, currentDate.Day, currentDate.Hour, currentDate.Minute, guid);
+            return string.Format("Log_{0:0000}{1:00}{2:00}-{3:00}{4:00}_{5}.log", currentDate.Year, currentDate.Month, currentDate.Day, currentDate.Hour, currentDate.Minute, guid);
         }
     }
 }

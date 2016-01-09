@@ -7,7 +7,9 @@ namespace SimpleLogger.Logging.Handlers
     {
         private readonly ILoggerFormatter _loggerFormatter;
 
-        public ConsoleLoggerHandler() : this(new DefaultLoggerFormatter()) { }
+        private bool cleanOutput;
+
+        public ConsoleLoggerHandler(bool cleanOutput = true) : this(new DefaultLoggerFormatter()) { this.cleanOutput = cleanOutput; }
 
         public ConsoleLoggerHandler(ILoggerFormatter loggerFormatter)
         {
@@ -16,7 +18,14 @@ namespace SimpleLogger.Logging.Handlers
 
         public void Publish(LogMessage logMessage)
         {
-            Console.WriteLine(_loggerFormatter.ApplyFormat(logMessage));
+            if (cleanOutput)
+            {
+                Console.WriteLine(logMessage.Text);
+            }
+            else
+            {
+                Console.WriteLine(_loggerFormatter.ApplyFormat(logMessage));
+            }
         }
     }
 }
