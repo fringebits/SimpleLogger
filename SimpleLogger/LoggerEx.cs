@@ -13,7 +13,7 @@
         {
             if (string.IsNullOrEmpty(appName))
             {
-                var assembly = Assembly.GetExecutingAssembly();
+                var assembly = Assembly.GetEntryAssembly();
                 appName = assembly.GetName().Name;
             }
 
@@ -41,7 +41,7 @@
 
         }
 
-        public static void InitializeUnitTestLogger(string appName = null)
+        public static void InitializeUnitTestLogger(string appName = "UnitTest")
         {
             var h = new FileLoggerHandler(string.Empty, GetAppDataFolder(appName));
 
