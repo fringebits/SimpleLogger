@@ -27,5 +27,9 @@ namespace SimpleLogger.Logging.Handlers
                 Console.WriteLine(_loggerFormatter.ApplyFormat(logMessage));
             }
         }
+
+        public void Shutdown()
+        {
+        }
     }
 }

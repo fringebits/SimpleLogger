@@ -4,37 +4,47 @@ namespace SimpleLogger.Logging
 {
     internal class LogPublisher : ILoggerHandlerManager
     {
-        private readonly IList<ILoggerHandler> _loggerHandlers;
-        private readonly IList<LogMessage> _messages;
+        private readonly IList<ILoggerHandler> loggerHandlers;
+        private readonly IList<LogMessage> messages;
 
         public LogPublisher()
         {
-            _loggerHandlers = new List<ILoggerHandler>();
-            _messages = new List<LogMessage>();
+            this.loggerHandlers = new List<ILoggerHandler>();
+            this.messages = new List<LogMessage>();
         }
 
         public void Publish(LogMessage logMessage)
         {
-            _messages.Add(logMessage);
-            foreach (var loggerHandler in _loggerHandlers)
+            this.messages.Add(logMessage);
+            foreach (var loggerHandler in this.loggerHandlers)
                 loggerHandler.Publish(logMessage);
         }
 
         public ILoggerHandlerManager AddHandler(ILoggerHandler loggerHandler)
         {
             if (loggerHandler != null)
-                _loggerHandlers.Add(loggerHandler);
+                this.loggerHandlers.Add(loggerHandler);
             return this;
         }
 
         public bool RemoveHandler(ILoggerHandler loggerHandler)
         {
-            return _loggerHandlers.Remove(loggerHandler);
+            loggerHandler.Shutdown();
+            return this.loggerHandlers.Remove(loggerHandler);
+        }
+
+        public void RemoveAll()
+        {
+            foreach (var h in this.loggerHandlers)
+            {
+                h.Shutdown();
+            }
+            this.loggerHandlers.Clear();
         }
 
         public IEnumerable<LogMessage> Messages
         {
-            get { return _messages; }
+            get { return this.messages; }
         }
     }
 }

@@ -42,7 +42,7 @@ namespace SimpleLogger.Logging.Handlers
             this.worker.Start();
         }
 
-        ~FileLoggerHandler()
+        public void Shutdown()
         {
             this.stopWork = true;
             this.worker.Join();

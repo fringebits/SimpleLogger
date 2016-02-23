@@ -17,5 +17,9 @@ namespace SimpleLogger.Logging.Handlers
         {
             System.Diagnostics.Debug.WriteLine(_loggerFormatter.ApplyFormat(logMessage));
         }
+
+        public void Shutdown()
+        {
+        }
     }
 }

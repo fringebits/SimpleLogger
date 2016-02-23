@@ -21,6 +21,12 @@
             return Path.Combine(rootFolder, appName);
         }
 
+        private static void Shutdown()
+        {
+            Logger.Log("LoggerEx.Shutdown():");
+            Logger.LogPublisher.RemoveAll();
+        }
+
         public static void InitalizeWfpLogger(string appName = null)
         {
             var h = new FileLoggerHandler(string.Empty, GetAppDataFolder(appName));
@@ -28,6 +34,8 @@
             Logger.LoggerHandlerManager
                 .AddHandler(h)
                 .AddHandler(new DebugConsoleLoggerHandler());
+
+            System.Windows.Application.Current.Exit += (s,e) => { Shutdown(); };
         }
 
         public static void InitializeConsoleLogger(string appName = null)
@@ -39,6 +47,8 @@
                 .AddHandler(new DebugConsoleLoggerHandler())
                 .AddHandler(new ConsoleLoggerHandler());
 
+            System.Windows.Application.Current.Exit += (s, e) => { Shutdown(); };
+
         }
 
         public static void InitializeUnitTestLogger(string appName = "UnitTest")
@@ -48,6 +58,8 @@
             Logger.LoggerHandlerManager
                 .AddHandler(h)
                 .AddHandler(new DebugConsoleLoggerHandler());
+
+            System.Windows.Application.Current.Exit += (s, e) => { Shutdown(); };
         }
     }
 }

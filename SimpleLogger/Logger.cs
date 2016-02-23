@@ -11,7 +11,7 @@ namespace SimpleLogger
 {
     public static class Logger
     {
-        private static readonly LogPublisher LogPublisher;
+        internal static readonly LogPublisher LogPublisher;
         private static readonly ModuleManager ModuleManager;
         private static readonly DebugLogger DebugLogger;
 
