@@ -8,7 +8,7 @@ namespace SimpleLogger.Logging.Handlers
     using System.Linq;
     using System.Threading;
 
-    public class FileLoggerHandler : ILoggerHandler
+    public class FileLoggerHandler : ILoggerHandler, IDisposable
     {
         private readonly string fileName;
         private readonly string directory;
@@ -44,8 +44,11 @@ namespace SimpleLogger.Logging.Handlers
 
         public void Shutdown()
         {
-            this.stopWork = true;
-            this.worker.Join();
+            if (this.stopWork == false)
+            {
+                this.stopWork = true;
+                this.worker.Join();
+            }
         }
 
         public void Publish(LogMessage logMessage)
@@ -82,6 +85,11 @@ namespace SimpleLogger.Logging.Handlers
             var currentDate = DateTime.Now;
             var guid = Guid.NewGuid();
             return string.Format("Log_{0:0000}{1:00}{2:00}-{3:00}{4:00}_{5}.log", currentDate.Year, currentDate.Month, currentDate.Day, currentDate.Hour, currentDate.Minute, guid);
+        }
+
+        public void Dispose()
+        {
+            this.Shutdown();
         }
     }
 }

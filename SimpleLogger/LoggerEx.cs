@@ -5,7 +5,7 @@
     using System.Reflection;
     using Logging.Handlers;
 
-    // TODO: Provide option to cleanup/prune 'old' logs (?)
+    // TODO: Provide option to cleanup/prune 'old' logs from AppData folder (?)
 
     public static class LoggerEx
     {
@@ -20,14 +20,14 @@
             var rootFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             return Path.Combine(rootFolder, appName);
         }
-
-        private static void Shutdown()
+        
+        public static void Shutdown()
         {
             Logger.Log("LoggerEx.Shutdown():");
             Logger.LogPublisher.RemoveAll();
         }
-
-        public static void InitalizeWfpLogger(string appName = null)
+        
+        public static FileLoggerHandler InitalizeWfpLogger(string appName = null)
         {
             var h = new FileLoggerHandler(string.Empty, GetAppDataFolder(appName));
 
@@ -35,10 +35,10 @@
                 .AddHandler(h)
                 .AddHandler(new DebugConsoleLoggerHandler());
 
-            System.Windows.Application.Current.Exit += (s,e) => { Shutdown(); };
+            return h;
         }
 
-        public static void InitializeConsoleLogger(string appName = null)
+        public static FileLoggerHandler InitializeConsoleLogger(string appName = null)
         {
             var h = new FileLoggerHandler(string.Empty, GetAppDataFolder(appName));
 
@@ -47,11 +47,10 @@
                 .AddHandler(new DebugConsoleLoggerHandler())
                 .AddHandler(new ConsoleLoggerHandler());
 
-            System.Windows.Application.Current.Exit += (s, e) => { Shutdown(); };
-
+            return h;
         }
 
-        public static void InitializeUnitTestLogger(string appName = "UnitTest")
+        public static FileLoggerHandler InitializeUnitTestLogger(string appName = "UnitTest")
         {
             var h = new FileLoggerHandler(string.Empty, GetAppDataFolder(appName));
 
@@ -59,7 +58,7 @@
                 .AddHandler(h)
                 .AddHandler(new DebugConsoleLoggerHandler());
 
-            System.Windows.Application.Current.Exit += (s, e) => { Shutdown(); };
+            return h;
         }
     }
 }
