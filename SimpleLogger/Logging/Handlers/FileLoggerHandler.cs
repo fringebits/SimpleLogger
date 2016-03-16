@@ -13,9 +13,6 @@ namespace SimpleLogger.Logging.Handlers
         private readonly string fileName;
         private readonly string directory;
         private readonly ILoggerFormatter loggerFormatter;
-        private readonly List<string> logQueue; 
-        private readonly Thread worker;
-        private bool stopWork = false;
 
         public string Fullpath
         {
@@ -37,46 +34,34 @@ namespace SimpleLogger.Logging.Handlers
             this.loggerFormatter = loggerFormatter;
             this.fileName = string.IsNullOrEmpty(fileName) ? CreateFileName() : fileName;
             this.directory = directory;
-            this.logQueue = new List<string>();
-            this.worker = new Thread(this.Worker);
-            this.worker.Start();
-        }
-
-        public void Shutdown()
-        {
-            if (this.stopWork == false)
-            {
-                this.stopWork = true;
-                this.worker.Join();
-            }
         }
 
         public void Publish(LogMessage logMessage)
         {
             if (!string.IsNullOrEmpty(this.directory))
             {
-                var directoryInfo = new DirectoryInfo(Path.Combine(this.directory));
-                if (!directoryInfo.Exists)
-                    directoryInfo.Create();
+                var di = new DirectoryInfo(this.directory);
+                if (!di.Exists)
+                {
+                    di.Create();
+                }
             }
 
             var line = this.loggerFormatter.ApplyFormat(logMessage);
-            this.logQueue.Add(line);
+            this.WriteLine(line);
         }
 
-        private void Worker()
-        {
-            while (!this.stopWork)
-            {
-                if (this.logQueue.Any())
-                {
-                    //TODO: Need to make this thread-safe.  Create a shared queue of 'lines to write' and start a writer thread.
-                    using (var writer = new StreamWriter(File.Open(Path.Combine(this.directory, this.fileName), FileMode.Append)))
-                        writer.WriteLine(this.logQueue.First());
-                    this.logQueue.RemoveAt(0);
-                }
+        private readonly object fileLock = new object();
 
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+        private void WriteLine(string line)
+        {
+            lock(this.fileLock)
+            {
+                //TODO: Need to make this thread-safe.  Create a shared queue of 'lines to write' and start a writer thread.
+                using (var writer = new StreamWriter(File.Open(this.Fullpath, FileMode.Append)))
+                {
+                    writer.WriteLine(line);
+                }
             }
         }
 
@@ -89,7 +74,6 @@ namespace SimpleLogger.Logging.Handlers
 
         public void Dispose()
         {
-            this.Shutdown();
         }
     }
 }

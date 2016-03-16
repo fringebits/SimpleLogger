@@ -4,9 +4,7 @@ namespace SimpleLogger.Logging.Formatters
     {
         public string ApplyFormat(LogMessage logMessage)
         {
-            return string.Format("{0:dd.MM.yyyy HH:mm}: {1} [line: {2} {3} -> {4}()]: {5}",
-                            logMessage.DateTime, logMessage.Level, logMessage.LineNumber, logMessage.CallingClass,
-                            logMessage.CallingMethod, logMessage.Text);
+            return $"{logMessage.DateTime:yyyy.MM.dd HH:mm:ss.fff}: {logMessage.ThreadId} {logMessage.Level} [line: {logMessage.LineNumber} {logMessage.CallingClass}.{logMessage.CallingMethod}()]: {logMessage.Text}";
         }
     }
 }

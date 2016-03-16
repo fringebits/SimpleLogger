@@ -21,12 +21,6 @@
             return Path.Combine(rootFolder, appName);
         }
         
-        public static void Shutdown()
-        {
-            Logger.Log("LoggerEx.Shutdown():");
-            Logger.LogPublisher.RemoveAll();
-        }
-        
         public static FileLoggerHandler InitalizeWfpLogger(string appName = null)
         {
             var h = new FileLoggerHandler(string.Empty, GetAppDataFolder(appName));

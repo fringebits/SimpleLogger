@@ -3,6 +3,8 @@ using SimpleLogger.Logging.Formatters;
 
 namespace SimpleLogger.Logging
 {
+    using System.Threading;
+
     public class LogMessage
     {
         public DateTime DateTime { get; set; }
@@ -10,6 +12,7 @@ namespace SimpleLogger.Logging
         public string Text { get; set; }
         public string CallingClass { get; set; }
         public string CallingMethod { get; set; }
+        public int ThreadId { get; set; }
         public int LineNumber { get; set; }
 
         public LogMessage() { }
@@ -22,6 +25,7 @@ namespace SimpleLogger.Logging
             CallingClass = callingClass;
             CallingMethod = callingMethod;
             LineNumber = lineNumber;
+            ThreadId = Thread.CurrentThread.ManagedThreadId;
         }
 
         public override string ToString()

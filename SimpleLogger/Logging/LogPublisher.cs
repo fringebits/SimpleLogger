@@ -29,16 +29,11 @@ namespace SimpleLogger.Logging
 
         public bool RemoveHandler(ILoggerHandler loggerHandler)
         {
-            loggerHandler.Shutdown();
             return this.loggerHandlers.Remove(loggerHandler);
         }
 
         public void RemoveAll()
         {
-            foreach (var h in this.loggerHandlers)
-            {
-                h.Shutdown();
-            }
             this.loggerHandlers.Clear();
         }
 
