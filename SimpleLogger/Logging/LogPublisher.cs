@@ -6,6 +6,7 @@ namespace SimpleLogger.Logging
     {
         private readonly IList<ILoggerHandler> loggerHandlers;
         private readonly IList<LogMessage> messages;
+        private readonly object logLock = new object();
 
         public LogPublisher()
         {
@@ -15,9 +16,14 @@ namespace SimpleLogger.Logging
 
         public void Publish(LogMessage logMessage)
         {
-            this.messages.Add(logMessage);
-            foreach (var loggerHandler in this.loggerHandlers)
-                loggerHandler.Publish(logMessage);
+            lock (this.logLock)
+            {
+                this.messages.Add(logMessage);
+                foreach (var loggerHandler in this.loggerHandlers)
+                {
+                    loggerHandler.Publish(logMessage);
+                }
+            }
         }
 
         public ILoggerHandlerManager AddHandler(ILoggerHandler loggerHandler)
