@@ -77,9 +77,10 @@ namespace SimpleLogger
             var methodBase = GetCallingMethodBase(stackFrame);
             var callingMethod = methodBase.Name;
             var callingClass = methodBase.ReflectedType.Name;
+            var fileName = stackFrame.GetFileName();
             var lineNumber = stackFrame.GetFileLineNumber();
 
-            Log(level, message, callingClass, callingMethod, lineNumber);
+            Log(level, message, callingClass, callingMethod, fileName, lineNumber);
         }
 
         public static void Log(Exception exception)
@@ -106,12 +107,13 @@ namespace SimpleLogger
             var methodBase = GetCallingMethodBase(stackFrame);
             var callingMethod = methodBase.Name;
             var callingClass = typeof(TClass).Name;
+            var fileName = stackFrame.GetFileName();
             var lineNumber = stackFrame.GetFileLineNumber();
 
-            Log(level, message, callingClass, callingMethod, lineNumber);
+            Log(level, message, callingClass, callingMethod, fileName, lineNumber);
         }
 
-        private static void Log(Level level, string message, string callingClass, string callingMethod, int lineNumber)
+        private static void Log(Level level, string message, string callingClass, string callingMethod, string fileName, int lineNumber)
         {
             if (!_isTurned || (!_isTurnedDebug && level == Level.Debug))
                 return;
@@ -119,7 +121,7 @@ namespace SimpleLogger
             var currentDateTime = DateTime.Now;
 
             ModuleManager.BeforeLog();
-            var logMessage = new LogMessage(level, message, currentDateTime, callingClass, callingMethod, lineNumber);
+            var logMessage = new LogMessage(level, message, currentDateTime, callingClass, callingMethod, fileName, lineNumber);
             LogPublisher.Publish(logMessage);
             ModuleManager.AfterLog(logMessage);
         }

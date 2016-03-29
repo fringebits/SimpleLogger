@@ -9,21 +9,23 @@ namespace SimpleLogger.Logging
     {
         public DateTime DateTime { get; set; }
         public Logger.Level Level { get; set; }
+        public int ThreadId { get; set; }
+        public string Filename { get; set; }
+        public int LineNumber { get; set; }
         public string Text { get; set; }
         public string CallingClass { get; set; }
         public string CallingMethod { get; set; }
-        public int ThreadId { get; set; }
-        public int LineNumber { get; set; }
 
         public LogMessage() { }
 
-        public LogMessage(Logger.Level level, string text, DateTime dateTime, string callingClass, string callingMethod, int lineNumber)
+        public LogMessage(Logger.Level level, string text, DateTime dateTime, string callingClass, string callingMethod, string fileName, int lineNumber)
         {
             Level = level;
             Text = text;
             DateTime = dateTime;
             CallingClass = callingClass;
             CallingMethod = callingMethod;
+            Filename = fileName;
             LineNumber = lineNumber;
             ThreadId = Thread.CurrentThread.ManagedThreadId;
         }

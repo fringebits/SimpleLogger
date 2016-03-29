@@ -24,6 +24,7 @@
     <Compile Include="Logger.cs" />
     <Compile Include="LoggerEx.cs" />
     <Compile Include="Logging\DebugLogger.cs" />
+    <Compile Include="Logging\Formatters\VisualStudioLoggerFormatter.cs" />
     <Compile Include="Logging\Module\EmailSenderLoggerModule.cs" />
     <Compile Include="Logging\Module\LoggerModule.cs" />
     <Compile Include="Logging\Module\ModuleManager.cs" />
