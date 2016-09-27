@@ -30,6 +30,16 @@
             {
                 var assembly = Assembly.GetEntryAssembly();
                 appName = assembly.GetName().Name;
+
+                var attribs = assembly.GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
+                if (attribs.Length > 0)
+                {
+                    var companyName = ((AssemblyCompanyAttribute)attribs[0]).Company;
+                    if (!string.IsNullOrEmpty(companyName))
+                    {
+                        appName = Path.Combine(companyName, appName);
+                    }
+                }
             }
 
             var rootFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
