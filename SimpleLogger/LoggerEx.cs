@@ -1,6 +1,7 @@
 ﻿namespace SimpleLogger
 {
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Reflection;
     using Logging.Handlers;
@@ -9,6 +10,20 @@
 
     public static class LoggerEx
     {
+        private static FileLoggerHandler fileLoggerHandler;
+
+        public static string CurrentFileHandlerLogPath => Path.GetDirectoryName(FileLoggerHandler.Fullpath);
+
+        private static FileLoggerHandler FileLoggerHandler
+        {
+            get { return fileLoggerHandler; }
+            set 
+            {
+                Debug.Assert(fileLoggerHandler == null);
+                fileLoggerHandler = value;
+            }
+        }
+
         private static string GetAppDataFolder(string appName = null)
         {
             if (string.IsNullOrEmpty(appName))
@@ -29,6 +44,8 @@
                 .AddHandler(h)
                 .AddHandler(new DebugConsoleLoggerHandler());
 
+            FileLoggerHandler = h;
+
             return h;
         }
 
@@ -41,6 +58,8 @@
                 .AddHandler(new DebugConsoleLoggerHandler())
                 .AddHandler(new ConsoleLoggerHandler());
 
+            FileLoggerHandler = h;
+
             return h;
         }
 
@@ -51,6 +70,8 @@
             Logger.LoggerHandlerManager
                 .AddHandler(h)
                 .AddHandler(new DebugConsoleLoggerHandler());
+
+            FileLoggerHandler = h;
 
             return h;
         }
