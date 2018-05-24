@@ -18,7 +18,7 @@ namespace SimpleLogger
         private static readonly object Sync = new object();
         private static Level _defaultLevel = Level.Info;
         private static bool _isTurned = true;
-        private static bool _isTurnedDebug = true;
+        private static bool _isTurnedDebug = false;
 
         public enum Level
         {

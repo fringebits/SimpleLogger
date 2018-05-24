@@ -5,26 +5,37 @@ namespace SimpleLogger.Logging.Handlers
 {
     public class ConsoleLoggerHandler : ILoggerHandler
     {
-        private readonly ILoggerFormatter _loggerFormatter;
+        private readonly ILoggerFormatter loggerFormatter;
 
-        private bool cleanOutput;
+        private readonly bool cleanOutput;
 
-        public ConsoleLoggerHandler(bool cleanOutput = true) : this(new DefaultLoggerFormatter()) { this.cleanOutput = cleanOutput; }
+        public Logger.Level Level { get; set; } = Logger.Level.Info;
+
+        public ConsoleLoggerHandler(bool cleanOutput = true) 
+            : this(new DefaultLoggerFormatter())
+        {
+            this.cleanOutput = cleanOutput;
+        }
 
         public ConsoleLoggerHandler(ILoggerFormatter loggerFormatter)
         {
-            _loggerFormatter = loggerFormatter;
+            this.loggerFormatter = loggerFormatter;
         }
 
         public void Publish(LogMessage logMessage)
         {
-            if (cleanOutput)
+            if (logMessage.Level < this.Level)
+            {
+                return;
+            }
+
+            if (this.cleanOutput)
             {
                 Console.WriteLine(logMessage.Text);
             }
             else
             {
-                Console.WriteLine(_loggerFormatter.ApplyFormat(logMessage));
+                Console.WriteLine(this.loggerFormatter.ApplyFormat(logMessage));
             }
         }
     }
