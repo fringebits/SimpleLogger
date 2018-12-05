@@ -2,6 +2,8 @@
 
 namespace SimpleLogger.Logging
 {
+    using System.Threading;
+
     internal class LogPublisher : ILoggerHandlerManager
     {
         private readonly IList<ILoggerHandler> loggerHandlers;
@@ -16,12 +18,30 @@ namespace SimpleLogger.Logging
 
         public void Publish(LogMessage logMessage)
         {
-            lock (this.logLock)
+            if (Monitor.TryEnter(this.logLock, 50))
             {
-                this.messages.Add(logMessage);
-                foreach (var loggerHandler in this.loggerHandlers)
+                try
                 {
-                    loggerHandler.Publish(logMessage);
+                    this.messages.Add(logMessage);
+                }
+                finally
+                {
+                    Monitor.Exit(this.logLock);
+                }
+            }
+
+            if (Monitor.TryEnter(this.logLock, 50))
+            {
+                try
+                {
+                    foreach (var loggerHandler in this.loggerHandlers)
+                    {
+                        loggerHandler.Publish(logMessage);
+                    }
+                }
+                finally
+                {
+                    Monitor.Exit(this.logLock);
                 }
             }
         }

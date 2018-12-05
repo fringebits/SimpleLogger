@@ -14,7 +14,9 @@ namespace SimpleLogger
         internal static readonly LogPublisher LogPublisher;
 
         private static readonly object Sync = new object();
+
         private static bool _isTurned = true;
+
         private static bool _isTurnedDebug = false;
 
         public enum Level
@@ -49,6 +51,8 @@ namespace SimpleLogger
         public static Level DefaultLevel { get; set; } = Level.Info;
 
         public static int IndentLevel { get; internal set; }
+
+        public static bool IsVerbose => _isTurnedDebug;
 
         public static ILoggerHandlerManager LoggerHandlerManager => LogPublisher;
 

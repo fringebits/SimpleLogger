@@ -9,7 +9,7 @@ namespace SimpleLogger.Logging.Handlers
 
         private readonly bool cleanOutput;
 
-        public Logger.Level Level { get; set; } = Logger.Level.Info;
+        //public Logger.Level Level { get; set; } = Logger.Level.Info;
 
         public ConsoleLoggerHandler(bool cleanOutput = true) 
             : this(new DefaultLoggerFormatter())
@@ -24,10 +24,10 @@ namespace SimpleLogger.Logging.Handlers
 
         public void Publish(LogMessage logMessage)
         {
-            if (logMessage.Level < this.Level)
-            {
-                return;
-            }
+            //if (logMessage.Level < this.Level)
+            //{
+            //    return;
+            //}
 
             if (this.cleanOutput)
             {
