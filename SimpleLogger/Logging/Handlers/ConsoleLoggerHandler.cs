@@ -7,14 +7,14 @@ namespace SimpleLogger.Logging.Handlers
     {
         private readonly ILoggerFormatter loggerFormatter;
 
-        private readonly bool cleanOutput;
+        private readonly bool rawOutput;
 
-        //public Logger.Level Level { get; set; } = Logger.Level.Info;
+        public Logger.Level Level { get; set; } = Logger.Level.Info;
 
-        public ConsoleLoggerHandler(bool cleanOutput = true) 
+        public ConsoleLoggerHandler(bool rawOutput = true) 
             : this(new DefaultLoggerFormatter())
         {
-            this.cleanOutput = cleanOutput;
+            this.rawOutput = rawOutput;
         }
 
         public ConsoleLoggerHandler(ILoggerFormatter loggerFormatter)
@@ -24,18 +24,11 @@ namespace SimpleLogger.Logging.Handlers
 
         public void Publish(LogMessage logMessage)
         {
-            //if (logMessage.Level < this.Level)
-            //{
-            //    return;
-            //}
+            if (logMessage.Level >= this.Level || (Logger.IsVerbose && logMessage.Level == Logger.Level.Debug))
+            {
+                var msg = this.rawOutput ? logMessage.Text : this.loggerFormatter.ApplyFormat(logMessage);
 
-            if (this.cleanOutput)
-            {
-                Console.WriteLine(logMessage.Text);
-            }
-            else
-            {
-                Console.WriteLine(this.loggerFormatter.ApplyFormat(logMessage));
+                Console.WriteLine(msg);
             }
         }
     }

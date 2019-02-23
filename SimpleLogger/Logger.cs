@@ -179,6 +179,7 @@ namespace SimpleLogger
             _isTurned = false;
         }
 
+
         public static void DebugOn()
         {
             _isTurnedDebug = true;

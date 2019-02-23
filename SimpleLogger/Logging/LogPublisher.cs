@@ -49,7 +49,10 @@ namespace SimpleLogger.Logging
         public ILoggerHandlerManager AddHandler(ILoggerHandler loggerHandler)
         {
             if (loggerHandler != null)
+            {
                 this.loggerHandlers.Add(loggerHandler);
+            }
+
             return this;
         }
 
@@ -63,9 +66,6 @@ namespace SimpleLogger.Logging
             this.loggerHandlers.Clear();
         }
 
-        public IEnumerable<LogMessage> Messages
-        {
-            get { return this.messages; }
-        }
+        public IEnumerable<LogMessage> Messages => this.messages;
     }
 }
