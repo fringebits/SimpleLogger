@@ -24,7 +24,7 @@
             }
         }
 
-        private static string GetAppDataFolder(string appName = null)
+        private static string GetAppDataFolder(string? appName = null)
         {
             if (string.IsNullOrEmpty(appName))
             {
@@ -46,7 +46,7 @@
             return Path.Combine(rootFolder, appName);
         }
         
-        public static FileLoggerHandler InitalizeWfpLogger(string appName = null)
+        public static FileLoggerHandler InitalizeWfpLogger(string? appName = null)
         {
             var h = new FileLoggerHandler(string.Empty, GetAppDataFolder(appName));
 
@@ -59,7 +59,7 @@
             return h;
         }
 
-        public static FileLoggerHandler InitializeConsoleLogger(string appName = null)
+        public static FileLoggerHandler InitializeConsoleLogger(string? appName = null)
         {
             var h = new FileLoggerHandler(string.Empty, GetAppDataFolder(appName));
 
