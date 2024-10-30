@@ -100,6 +100,18 @@ namespace SimpleLogger
             Log(Level.Debug, message, callingClass, callingMethod, fileName, lineNumber);
         }
 
+        public static void LogWarning(string message)
+        {
+            var stackFrame = FindStackFrame();
+            var methodBase = GetCallingMethodBase(stackFrame);
+            var callingMethod = methodBase.Name;
+            var callingClass = methodBase.ReflectedType.Name;
+            var fileName = stackFrame.GetFileName();
+            var lineNumber = stackFrame.GetFileLineNumber();
+
+            Log(Level.Warning, message, callingClass, callingMethod, fileName, lineNumber);
+        }
+
         public static void Log(Exception exception)
         {
             Log(Level.Error, exception.Message);
