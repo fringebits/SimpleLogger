@@ -10,11 +10,11 @@
 
     public static class LoggerEx
     {
-        private static FileLoggerHandler fileLoggerHandler;
+        private static FileLoggerHandler? fileLoggerHandler;
 
-        public static string CurrentFileHandlerLogPath => Path.GetDirectoryName(FileLoggerHandler.Fullpath);
+        public static string? CurrentFileHandlerLogPath => Path.GetDirectoryName(FileLoggerHandler.Fullpath);
 
-        private static FileLoggerHandler FileLoggerHandler
+        private static FileLoggerHandler? FileLoggerHandler
         {
             get { return fileLoggerHandler; }
             set 
@@ -29,7 +29,16 @@
             if (string.IsNullOrEmpty(appName))
             {
                 var assembly = Assembly.GetEntryAssembly();
+                if (assembly == null)
+                {
+                    throw new Exception("Null entry assembly.");
+                }
+
                 appName = assembly.GetName().Name;
+                if (appName == null)
+                {
+                    throw new Exception("Null assembly name.");
+                }
 
                 var attribs = assembly.GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
                 if (attribs.Length > 0)

@@ -36,6 +36,7 @@ namespace SimpleLogger
                 LogPublisher = new LogPublisher();
                 Modules = new ModuleManager();
                 Debug = new DebugLogger();
+                DefaultColor = Console.ForegroundColor; // set the default to 'current color'
             }
         }
 
@@ -47,6 +48,8 @@ namespace SimpleLogger
 
             Log(Level.Info, "Default initialization");
         }
+
+        public static ConsoleColor DefaultColor { get; set; } 
 
         public static Level DefaultLevel { get; set; } = Level.Info;
 
@@ -61,11 +64,6 @@ namespace SimpleLogger
             Log("There is no message");
         }
 
-        public static void Log(string message)
-        {
-            Log(DefaultLevel, message);
-        }
-
         public static void PushIndent()
         {
             IndentLevel += 1;
@@ -76,7 +74,17 @@ namespace SimpleLogger
             IndentLevel = Math.Max(0, IndentLevel - 1);
         }
 
-        public static void Log(Level level, string message)
+        public static void Log(string message)
+        {
+            Log(DefaultLevel, message);
+        }
+
+        public static void Log(string message, ConsoleColor color)
+        {
+            Log(DefaultLevel, message, color);
+        }
+
+        public static void Log(Level level, string message, ConsoleColor? color = null)
         {
             var stackFrame = FindStackFrame();
             var methodBase = GetCallingMethodBase(stackFrame);
@@ -85,36 +93,27 @@ namespace SimpleLogger
             var fileName = stackFrame.GetFileName();
             var lineNumber = stackFrame.GetFileLineNumber();
 
-            Log(level, message, callingClass, callingMethod, fileName, lineNumber);
+            Log(level, message, callingClass, callingMethod, fileName, lineNumber, color ?? DefaultColor);
         }
 
         public static void LogDebug(string message)
         {
-            var stackFrame = FindStackFrame();
-            var methodBase = GetCallingMethodBase(stackFrame);
-            var callingMethod = methodBase.Name;
-            var callingClass = methodBase.ReflectedType.Name;
-            var fileName = stackFrame.GetFileName();
-            var lineNumber = stackFrame.GetFileLineNumber();
-
-            Log(Level.Debug, message, callingClass, callingMethod, fileName, lineNumber);
+            Log(Level.Debug, message, DefaultColor);
         }
 
         public static void LogWarning(string message)
         {
-            var stackFrame = FindStackFrame();
-            var methodBase = GetCallingMethodBase(stackFrame);
-            var callingMethod = methodBase.Name;
-            var callingClass = methodBase.ReflectedType.Name;
-            var fileName = stackFrame.GetFileName();
-            var lineNumber = stackFrame.GetFileLineNumber();
+            Log(Level.Debug, message, ConsoleColor.Yellow);
+        }
 
-            Log(Level.Warning, message, callingClass, callingMethod, fileName, lineNumber);
+        public static void LogError(string message)
+        {
+            Log(Level.Error, message, ConsoleColor.Yellow);
         }
 
         public static void Log(Exception exception)
         {
-            Log(Level.Error, exception.Message);
+            LogError(exception.Message);
             Modules.ExceptionLog(exception);
         }
 
@@ -138,10 +137,10 @@ namespace SimpleLogger
             var fileName = stackFrame.GetFileName();
             var lineNumber = stackFrame.GetFileLineNumber();
 
-            Log(level, message, callingClass, callingMethod, fileName, lineNumber);
+            Log(level, message, callingClass, callingMethod, fileName, lineNumber, DefaultColor);
         }
 
-        private static void Log(Level level, string message, string callingClass, string callingMethod, string fileName, int lineNumber)
+        private static void Log(Level level, string message, string callingClass, string callingMethod, string? fileName, int lineNumber, ConsoleColor color)
         {
             if (!_isTurned || (!_isTurnedDebug && level == Level.Debug))
             {
@@ -153,7 +152,8 @@ namespace SimpleLogger
             Modules.BeforeLog();
             var logMessage = new LogMessage(level, message, currentDateTime, callingClass, callingMethod, fileName, lineNumber)
             {
-                IndentLevel = IndentLevel
+                IndentLevel = IndentLevel,
+                ForegroundColor = color,                
             };
 
             LogPublisher.Publish(logMessage);

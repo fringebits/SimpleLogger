@@ -11,7 +11,7 @@ namespace SimpleLogger.Logging.Module
     {
         private readonly SmtpServerConfiguration _smtpServerConfiguration;
 
-        public string Sender { get; set; }
+        public string? Sender { get; set; }
         public IList<string> Recipients { get; private set; }
         public bool EnableSsl { get; set; }
 
